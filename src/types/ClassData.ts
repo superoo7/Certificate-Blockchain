@@ -1,7 +1,15 @@
+export interface NodeData {
+  url: string
+}
+
 export interface BlockChainData {
   chain: BlockData[]
   difficulty: number
   pendingTransactions: TransactionData[]
+  createTransaction(t: TransactionData): void
+  addBlock(b: BlockData): void
+  getNextBlock(): BlockData
+  isChainValid(): boolean
 }
 
 export interface BlockData {

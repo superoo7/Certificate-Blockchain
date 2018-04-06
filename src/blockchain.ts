@@ -10,14 +10,14 @@ export default class Blockchain implements BlockChainData {
   constructor() {
     this.pendingTransactions = []
     this.chain = [this.createGenesisBlock()]
-    this.difficulty = 4
+    this.difficulty = 2
   }
 
-  public createGenesisBlock(): BlockData {
+  private createGenesisBlock(): BlockData {
     return new Block('0', Date.now().toString(), [])
   }
 
-  public createTransaction(t: TransactionData) {
+  public createTransaction(t: TransactionData): void {
     this.pendingTransactions = [...this.pendingTransactions, t]
   }
 
@@ -25,11 +25,11 @@ export default class Blockchain implements BlockChainData {
     this.chain = [...this.chain, b]
   }
 
-  public getLastBlock(): BlockData {
+  private getLastBlock(): BlockData {
     return this.chain[this.chain.length - 1]
   }
 
-  public getNextBlock() {
+  public getNextBlock(): BlockData {
     let b = new Block(this.getLastBlock().hash, Date.now().toString(), this.pendingTransactions)
     b.hash = this.generateHash(b)
     this.pendingTransactions = []
@@ -48,7 +48,7 @@ export default class Blockchain implements BlockChainData {
     return hash
   }
 
-  public isChainValid() {
+  public isChainValid(): boolean {
     for (let i = 1; i < this.chain.length; i++) {
       const currentBlock = this.chain[i]
       const previousBlock = this.chain[i - 1]

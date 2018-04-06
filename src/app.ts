@@ -7,7 +7,8 @@ import fetch from 'node-fetch'
 import Block from './block'
 import Blockchain from './blockchain'
 import Transaction from './transaction'
-import { TransactionData, BlockChainData, Cert } from './types/ClassData'
+import Node from './node'
+import { TransactionData, BlockChainData, Cert, NodeData } from './types/ClassData'
 
 // Express Server Setup
 const app = express()
@@ -24,14 +25,33 @@ if (port == undefined) {
 }
 
 // Blockchain initiate
-let transactions: TransactionData[] = []
-let nodes = []
+let nodes: NodeData[] = []
 let bc: BlockChainData = new Blockchain()
 
 app.get('/', function(req, res) {
   var host = req.get('host')
   console.log(host)
-  res.json(transactions)
+  res.json({
+    difficulty: bc.difficulty,
+    genesisBlock: bc.chain[0],
+    repository: 'https://github.com/superoo7/Certificate-Blockchain'
+  })
+})
+
+app.post('/nodes/register', function(req, res) {
+  let url: { url: string }[] = req.body.urls
+  url.map(data => {
+    let node = new Node(data.url)
+    nodes = [...nodes, node]
+  })
+})
+
+app.get('/nodes', function(req, res) {
+  res.json(nodes)
+})
+
+app.get('/blockchain', function(req, res) {
+  res.json(bc)
 })
 
 app.post('/transactions', function(req, res) {
@@ -47,8 +67,18 @@ app.post('/transactions', function(req, res) {
     }
     res.json({ error: reply })
   }
-  transactions = [...transactions, transaction]
-  res.json(transactions)
+  bc.createTransaction(transaction)
+  if (!bc.isChainValid) {
+    res.json({ error: 'unable to create block' })
+  }
+  let nb = bc.getNextBlock()
+  bc.addBlock(nb)
+  res.json({
+    hash: nb.hash,
+    timestamp: nb.timestamp,
+    index: bc.chain.length - 1,
+    transactions: nb.transactions
+  })
 })
 
 app.listen(port, function() {
