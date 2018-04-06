@@ -1,6 +1,6 @@
+import sha256 = require('js-sha256')
 import { BlockChainData, BlockData, TransactionData } from './types/ClassData'
 import Block from './block'
-import sha256 = require('js-sha256')
 
 export default class Blockchain implements BlockChainData {
   public chain: BlockData[]

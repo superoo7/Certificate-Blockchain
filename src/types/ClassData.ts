@@ -14,28 +14,31 @@ export interface BlockData {
 }
 
 export interface TransactionData {
+  cert: Cert | boolean
   createdTime: number
-  cert: {
-    address: string
-    avatar: string
-    category: string
-    country: string
-    date: number
-    documents: {
-      ideaku: {
-        _id: string
-        hash: string
-        certificate: number
-        payment: string
-        receipt: string
-      }
+  error: undefined | { name: string; type: boolean }[]
+}
+
+export type Cert = {
+  address: string
+  avatar: string
+  category: string
+  country: string
+  date: number
+  documents: {
+    ideaku: {
+      _id: string
+      hash: string
+      certificate: number
+      payment: string
+      receipt: number
     }
-    latitude: number
-    lngitude: number
-    media: string
-    media_name: string
-    name: string
-    isPrivate: boolean
-    title: string
   }
+  latitude: number
+  lngitude: number
+  media: string
+  media_name: string
+  name: string
+  isPrivate: boolean
+  title: string
 }
